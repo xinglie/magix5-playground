@@ -1,0 +1,132 @@
+@import "./_vars.less";
+@font-face {
+    font-family: 'iconfont';
+    /* Project id 890516 */
+    src: url('//at.alicdn.com/t/font_890516_jqlb351gso.woff2?t=1632361062005') format('woff2'), url('//at.alicdn.com/t/font_890516_jqlb351gso.woff?t=1632361062005') format('woff'), url('//at.alicdn.com/t/font_890516_jqlb351gso.ttf?t=1632361062005') format('truetype');
+}
+
+.iconfont {
+    font: 400 normal normal 16px/1 "iconfont";
+    display: inline-block;
+    speak: none;
+    position: relative;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+    all: initial;
+    display: block;
+    box-sizing: border-box;
+    font-size: @font-size;
+    line-height: @line-height;
+    font-family: Arial, sans-serif;
+}
+
+a {
+    text-decoration: none;
+}
+
+// Box sizing
+.box-sizing(@boxmodel) {
+    box-sizing: @boxmodel;
+}
+
+* {
+    .box-sizing(inherit);
+}
+
+*:before, *:after {
+    .box-sizing(inherit);
+}
+
+.display-flex {
+    display: flex;
+}
+
+.align-items-center {
+    align-items: center;
+}
+
+.justify-content-center {
+    justify-content: center;
+}
+
+.tag-input {
+    margin: 0;
+}
+
+.input {
+    font-size: 100%;
+    margin: 0;
+    appearance: none;
+    caret-color: @color-brand;
+    display: inline-block;
+    height: @input-height;
+    padding: 1px 4px;
+    border-radius: @border-radius;
+    box-sizing: border-box;
+    box-shadow: none;
+    border: 1px solid @color-border;
+    background-color: #fff;
+    color: @color-primary;
+    width: @input-width;
+    max-width: 100%;
+    outline: 0;
+}
+
+.input:hover {
+    border-color: @color-border-hover;
+}
+
+.wp100 {
+    width: 100%;
+}
+
+.background-color-fff {
+    background-color: #fff;
+}
+
+.flex-fill-rest {
+    flex: 1;
+}
+
+.gray, .color-999 {
+    color: @color-third;
+}
+
+.gray:hover {
+    color: @color-secondary;
+}
+
+.ellipsis {
+    white-space: nowrap;
+    word-wrap: normal;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.fontsize-12 {
+    font-size: 12px;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.r90 {
+    transform: rotate(90deg);
+}
+
+.r270 {
+    transform: rotate(270deg);
+}
+
+.notallowed {
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.unselectable {
+    user-select: none;
+}

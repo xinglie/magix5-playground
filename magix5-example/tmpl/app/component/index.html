@@ -1,0 +1,6 @@
+<div>
+    <div>
+        组件测试页面，当前共{{=total}}条数据，当前第{{=page}}页
+    </div>
+    <mx-pager style="margin-top: 40px;" *total="{{# total }}" *page="{{# page }}" mx-change="toPage()" />
+</div>

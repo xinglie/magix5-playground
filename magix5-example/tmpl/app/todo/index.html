@@ -1,0 +1,25 @@
+<div class="todo">
+    <div class="padding-4px border-bottom-1px-solid-ccc9">
+        <input class="tag-input input wp100 height-26px" placeholder="准备做什么?回车添加待办事项" mx-keydown="watchKeydown()" />
+    </div>
+    <div class="padding-4px min-height-40px background-color-fff{{if !todos.length}} color-999{{/if}}">
+        {{if todos.length}}
+        <div class="outline">
+            {{each todos as todo todoIndex}}
+            <div class="todo-item display-flex align-items-center  border-bottom-1px-solid-ccc9">
+                <label
+                    class="display-flex align-items-center flex-fill-rest ellipsis{{if todo.complete}} color-999 text-decoration-line-through{{/if}}">
+                    <input type="checkbox" checked="{{=todo.complete}}?"
+                        mx-change="changeTaskStatus({index:{{=todoIndex}}})" />
+                    {{=todo.task}}
+                </label>
+                <i class="iconfont fontsize-12 cursor-pointer gray remove-icon"
+                    mx-click="removeTaskAt({index:{{=todoIndex}}})">&#xe6b3;</i>
+            </div>
+            {{/each}}
+        </div>
+        {{else}}
+        暂无待办事项
+        {{/if}}
+    </div>
+</div>

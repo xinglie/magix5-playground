@@ -1,0 +1,12 @@
+{
+    "compilerOptions": {
+        "baseUrl": "./",
+        "target": "esnext",
+        "downlevelIteration": true,
+        "lib": [
+            "esnext",
+            "dom",
+            "dom.iterable"
+        ]
+    }
+}
