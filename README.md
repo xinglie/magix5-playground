@@ -10,7 +10,7 @@ magix5 playground
 
 **需要通过类似http://localhost/magix5-playground/magix5-example/index-debug.html，通过http的形式访问index-debug.html页面**
 
-##　发布
+## 发布
 在`magix5-example`目录下，运行`gulp dist`进入发布模式，任务会把`magix5-example/tmpl`目录下的文件编译到`magix5-example/src`目录下，然后再把`magix5-example/src`目录下的文件合并压缩打包到`magix5-example/dist`目录下
 
 最后发布`magix5-example/index.html`及`magix5-example/dist`目录下的文件即可。
