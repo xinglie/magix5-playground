@@ -160,6 +160,7 @@ gulp.task('dist', gulp.series('cleanSrc', () => {
             './src/index.js',
             './src/gallery/**',
             './src/i18n/**',
+            './src/provider/**',
             './src/app/**'])
             .pipe(concat('index.js'))
             .pipe(minify(terserOptions))

@@ -10,6 +10,7 @@ setTimeout(() => {
             app: src + 'app',
             gallery: src + 'gallery',
             i18n: src + 'i18n',
+            provider: src + 'provider'
         },
         alias: {
             magix: 'magix5'
@@ -67,6 +68,7 @@ setTimeout(() => {
             routes: {
                 '/home': 'app/index',
                 '/todo': 'app/index',
+                '/todo2': 'app/index',
                 '/about': 'app/index',
                 '/component': 'app/index'
             },
