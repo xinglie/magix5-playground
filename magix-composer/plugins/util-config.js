@@ -47,7 +47,9 @@ module.exports = {
     jsFileExtNames: ['js', 'mjs', 'mx', 'mmx', 'ts', 'mts', 'jsx', 'es', 'tsx', 'mtsx'], //选择编译时的后缀名
     galleries: {
         mxRoot: 'app/galleries/',
-        wgtRoot: 'app/widgets/'
+        wgtRoot: 'app/widgets/',
+        mxcRoot: 'app/combines/',
+        mxsRoot: 'app/snippets/'
     },
     components: {
         xyRoot: 'app/coms/',

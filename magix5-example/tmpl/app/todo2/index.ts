@@ -9,6 +9,7 @@ export default View.extend({
     tmpl: '@:index.html',
     init() {
         Data.setup(this);
+        window.$todo = Data;
     },
     //这里接收外部数据
     assign(data) {

@@ -5,13 +5,13 @@ let { View } = Magix;
 export default View.extend({
     tmpl: '@:./list.html',
     init() {
-        Data.setup(this, ['todos']);
+        Data.observeKeys(this, ['todos']);
     },
-    async render() {
-        let data = Data.getData();
+    render() {
+        let data = Data.queryData();
         this.digest(data);
     },
-    async 'removeTaskAt<click>'(e: Magix5.MagixMouseEvent) {
+    'removeTaskAt<click>'(e: Magix5.MagixMouseEvent) {
         let { index } = e.params;
         Data.removeAt(index);
     },

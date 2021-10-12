@@ -1,0 +1,139 @@
+<div>
+<h2>双向绑定示例</h2>
+<!--双向绑定语法 {{:expr & ctrls }}-->
+<!-- 如果ctrls有refresh,则会实时更新界面，否则只同步数据 -->
+<input class="input" {{:inputExample & {refresh:true,required:[true,'custom msg']}}} /><span vd-msg-for="{{~inputExample}}"></span><span>{{=inputExample}}</span>
+<table>
+    <tbody>
+        {{each list as e index}}
+        <tr id="t_{{=e.id}}">
+            <td>
+                {{=e.row}}
+            </td>
+            <td>
+                <textarea {{:e.name & {required:true} }}></textarea>
+                <span vd-msg-for="{{~e.name}}"></span>
+                <span mx-host="{{=$viewId}}" vd-msg-for="list.{{=index}}.name"></span>
+            </td>
+            <td>
+                <button mx-click="delRow({at:{{=index}}})">删除当前行</button>
+            </td>
+        </tr>
+        {{/each}}
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="3">
+                <button mx-click="addRow()">添加一行</button>
+            </td>
+        </tr>
+    </tfoot>
+</table>
+<fieldset>
+    <figcaption>checkbox数组示例</figcaption>
+    <figure>
+        <input value="c1" name="cb1_{{=$viewId}}" type="checkbox" {{:checkboxList & {refresh:true} }}  />
+        <input value="c2" name="cb1_{{=$viewId}}" type="checkbox" {{:checkboxList & {refresh:true} }} />
+        <input value="c3" name="cb1_{{=$viewId}}" type="checkbox" {{:checkboxList & {refresh:true} }} />
+        <div>
+            当前选中：{{=checkboxList}}
+        </div>
+    </figure>
+</fieldset>
+<fieldset>
+    <figcaption>checkbox对象示例</figcaption>
+    <figure>
+        <input value="c1" name="cb2_{{=$viewId}}" type="checkbox" {{:checkboxObject& {refresh:true}}} />
+        <input value="c2" name="cb2_{{=$viewId}}" type="checkbox" {{:checkboxObject& {refresh:true}}} />
+        <input value="c3" name="cb2_{{=$viewId}}" type="checkbox" {{:checkboxObject& {refresh:true}}} />
+        <div>
+            当前选中：{{=JSON.stringify(checkboxObject)}}
+        </div>
+    </figure>
+</fieldset>
+
+<fieldset>
+    <figcaption>radio示例</figcaption>
+    <figure>
+        <input value="c1" name="r1_{{=$viewId}}" type="radio" {{:radioChecked}} />
+        <input value="c2" name="r1_{{=$viewId}}" type="radio" {{:radioChecked}} />
+        <input value="c3" name="r1_{{=$viewId}}" type="radio" {{:radioChecked}} />
+    </figure>
+</fieldset>
+
+<fieldset>
+    <figcaption>下拉框示例</figcaption>
+    <figure>
+        <select {{:singleDropdown}} style="width:200px">
+            <option value="o1">1</option>
+            <option value="o2">2</option>
+            <option value="o3">3</option>
+            <option value="o4">4</option>
+        </select>
+    </figure>
+</fieldset>
+
+<fieldset>
+    <figcaption>多选下拉框数组示例</figcaption>
+    <figure>
+        <select {{:multiDropdownList}} multiple style="width:200px">
+            <option value="o1">1</option>
+            <option value="o2">2</option>
+            <option value="o3">3</option>
+            <option value="o4">4</option>
+        </select>
+    </figure>
+</fieldset>
+<fieldset>
+    <figcaption>多选下拉框对象示例</figcaption>
+    <figure>
+        <select {{:multiDropdownObject}} multiple style="width:200px">
+            <option value="o1">1</option>
+            <option value="o2">2</option>
+            <option value="o3">3</option>
+            <option value="o4">4</option>
+        </select>
+    </figure>
+</fieldset>
+
+
+<!-- <fieldset>
+    <figcaption>自定义组件</figcaption>
+    <figure>
+        <mx-dropdown *list="{{# mxDropdownList }}" *text-key="text" *value-key="key"
+            *selected="{{: mxDropdownSelected&{read:'value',refresh:true}}}" style="width:200px" />
+    </figure>
+</fieldset> -->
+
+<fieldset>
+    <figcaption>自定义view，多值绑定</figcaption>
+    <figure>
+        <mx-vframe src="./form-inner" *input-content1="{{:viewContent1}}" *input-content2="{{:viewContent2}}" />
+        <!-- <mx-vframe src="../../gallery/mx-dropdown/index" *list="{{# mxDropdownList }}" *text-key="text" *value-key="key"
+            *selected="{{: mxDropdownSelected&{read:'value'}}}" style="width:200px" /> -->
+    </figure>
+</fieldset>
+<fieldset>
+    <figcaption>绑定与事件</figcaption>
+    <figure>
+        <input {{:eventTest}} mx-input="logValue()" />
+    </figure>
+</fieldset>
+<fieldset>
+    <figcaption>checkbox半选中状态</figcaption>
+    <figure>
+        <input type="checkbox" indeterminate="{{=checkboxIndeterminate}}?" />
+        <button mx-click="toggleIndeterminate()">切换状态</button>
+        <span vd-msg-for="{{~eventTest}}"></span>
+    </figure>
+</fieldset>
+
+<fieldset>
+    <figcaption>粘贴事件</figcaption>
+    <figure>
+        <div tabindex="0" class="focusable" mx-paste="logPaste()">先点击激活该div，出现绿色边框后再粘贴</div>
+    </figure>
+</fieldset>
+
+<button mx-click="log()">输出当前所有值</button>
+</div>

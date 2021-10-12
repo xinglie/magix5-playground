@@ -83,7 +83,7 @@ module.exports = (input, htmlFile, walk) => {
             attrsStart,
             attrsEnd
         }) {
-            //console.log(tag);
+            //console.log(tag,attrs);
             let lowerTag = tag.toLowerCase();
             if (htmlFile &&
                 upperCaseReg.test(tag) &&

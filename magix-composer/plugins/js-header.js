@@ -1,6 +1,7 @@
 //处理文件的头信息
 //let configs = require('./util-config');
-let snippetReg = /(?:^|[\r\n])\s*(?:\/{2,})?\s*(['"])?magix-composer\s*#\s*(?:snippet|gallery-config|gconfig|g-config|raw|gcfg)(?:[^\r\n]+)?\1\s*;?/g;
+let snippetReg = /(?:^|[\r\n])\s*(?:\/{2,})?\s*(['"])?magix-composer\s*#\s*(?:snippet|gallery-config|gconfig|g-config|raw|gcfg|combine-config|ccfg|c-config)(?:[^\r\n]+)?\1\s*;?/g;
+
 //let excludeReg = /(?:^|[\r\n])\s*(?:\/{2,})?\s*(['"])?\s*#\s*exclude[\(\[]([\w,]+)[\)\]]\1\s*;?/g;
 let excludeReg1 = /(?:^|[\r\n])\s*(?:\/{2,})?\s*(['"])?magix-composer\s*#\s*exclude\s*=\s*([\w,_]+)\1\s*;?/g;
 let loaderReg = /(?:^|[\r\n])\s*(?:\/{2,})?\s*(['"])?magix-composer\s*#\s*loader\s*=\s*([\w]+)\1\s*;?/g;

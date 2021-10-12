@@ -6,7 +6,7 @@
 
 .todo {
     background: #eee9;
-    min-width: 400px;
+    min-width: 600px;
     border: solid 1px #ccc;
 }
 
@@ -51,4 +51,39 @@
 .foot {
     padding: 0 10px;
     letter-spacing: 4px;
+}
+
+@keyframes showAndHide {
+    0%{
+        opacity: 1;
+    }
+    100%{
+        opacity: 0;
+    }
+}
+.loading {
+    position: relative;
+    display: inline-block;
+    width: 5px;
+    height: 5px;
+    background: #f00;
+    margin-left: 20px;
+    animation: showAndHide 1s infinite;
+}
+
+.loading::before {
+    content: '';
+    width: 5px;
+    height: 5px;
+    background: #f00;
+    position: absolute;
+    left: -8px
+}
+.loading::after {
+    content: '';
+    width: 5px;
+    height: 5px;
+    background: #f00;
+    position: absolute;
+    right: -8px
 }

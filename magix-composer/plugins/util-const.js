@@ -69,7 +69,7 @@ module.exports = {
             //console.log(names);
             return names;
         },
-        removeEmptyAttributes: true, //移除空的属性
+        removeEmptyAttributes: false, //移除空的属性
         collapseInlineTagWhitespace: true, //移除标签间的空白
         caseSensitive: true, //保持大小写
         keepClosingSlash: true,//保持关闭斜杠

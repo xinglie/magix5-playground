@@ -119,7 +119,7 @@ let innerView = (result, info, gRoot, extInfo, actions, e) => {
         }
         result.mxView = rPath;
     }
-    //console.log('xx', result.mxView);
+    //console.log('xx', result.mxView,info,result.tag);
     if (utils.isObject(info) &&
         utils.isFunction(info.processor)) {
         let html = info.processor(result, actions, extInfo) || '';
@@ -285,7 +285,7 @@ let innerGroup = (result) => {
     return `<${tag} ${newAttrs}>${result.content}</${tag}${result.endAttrs}>`;
 };
 module.exports = {
-    process(tmpl, extInfo, e) {
+    async process(tmpl, extInfo, e) {
         let cmdCache = Object.create(null);
         let galleriesMap = configs.galleries;
         let tmplConditionAttrs = Object.create(null);
@@ -445,6 +445,7 @@ module.exports = {
             } else if (!skipTags[result.tag]) {
                 let content = result.content;
                 let fn = galleriesMap[result.tag] || configs.customTagOrAttrProcessor;
+                //console.log(fn, result.tag, galleriesMap);
                 //console.log('xxx');
                 let customContent = fn(result, actions, extInfo, e);
                 if (!customContent && !isCustomAttr) {
@@ -458,7 +459,8 @@ module.exports = {
                 }
             }
         };
-        let processGalleryTag = (n, map) => {
+        let processGalleryTag = async (n, map) => {
+            debugger;
             let result = getTagInfo(n, map);
             let content = result.content;
             let hasGallery = galleriesMap.hasOwnProperty(n.pfx + 'Root');
@@ -481,13 +483,11 @@ module.exports = {
                         }
                         let main = (n.group ? '' : n.pfx + '-') + result.mainTag;
                         let cpath = path.join(configs.commonFolder, gRoot, main, subs);
-                        //console.log(cpath);
                         if (fs.existsSync(cpath)) {
                             let {
                                 cfg,
                                 file: configFile
-                            } = customConfig(cpath, main);
-                            //console.log(cfg, configFile);
+                            } = await customConfig(cpath, main);
                             if (cfg.hasOwnProperty(result.tag)) {
                                 let ci = cfg[result.tag];
                                 if (utils.isFunction(ci)) {
@@ -558,6 +558,7 @@ module.exports = {
                 content = innerView(result, gMap[result.tag], gRoot, extInfo, actions, e);
                 update = true;
             }
+            //console.log('-------', update, content, result.tag, e.shortHTMLFile);
             if (update) {
                 tmpl = tmpl.substring(0, n.start) + content + tmpl.substring(n.end);
                 //console.log(tmpl);
@@ -772,20 +773,20 @@ module.exports = {
             tmpl = tmpl.substring(0, n.start) + content + tmpl.substring(n.end);
             updateOffset(n, content);
         };
-        let walk = (nodes, map) => {
+        let walk = async (nodes, map) => {
             if (nodes) {
                 if (!map) map = nodes.__map;
                 for (let n of nodes) {
                     if (!n.isText &&
                         !n.isComment) {
-                        walk(n.children, map);
+                        await walk(n.children, map);
                         if (n.needEncode) {
                             processEncodeAttr(n, map);
                         } else if (n.hasCustAttr) {
                             processCustomTagOrAttr(n, map, true);
                         } else if (n.customTag) {
                             if (configs.galleryPrefixes[n.pfx] === 1) {
-                                processGalleryTag(n, map);
+                                await processGalleryTag(n, map);
                             } else {
                                 processCustomTagOrAttr(n, map);
                             }
@@ -860,8 +861,9 @@ module.exports = {
         };
         let checkTimes = 2 << 4;
         tokens = tmplParser(tmpl, e.shortHTMLFile, checkCallback);
+        //console.log('before',tmpl);
         while (hasSpceialAttrs && --checkTimes) {
-            walk(tokens);
+            await walk(tokens);
             tmpl = tmplCmd.store(tmpl, cmdCache);
             tmpl = tmplCmd.store(tmpl, cmdCache, artCommandReg);
             hasSpceialAttrs = false;

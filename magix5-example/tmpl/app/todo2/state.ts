@@ -6,13 +6,15 @@ let { View } = Magix;
 export default View.extend({
     tmpl: '@:./state.html',
     init() {
-        Data.setup(this, ['todos']);
+        Data.observeKeys(this, ['todos']);
+        Data.observeState(this);
     },
     async render() {
-        let data = Data.getData();
+        let data = Data.queryData();
         this.digest({
             all: data.todos.length,
-            completed: Data.queryCompletedList().length
+            completed: Data.queryCompletedList().length,
+            state: Data.queryState()
         });
     }
 });

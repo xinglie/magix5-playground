@@ -26,12 +26,18 @@ let md5 = (text, configKey, prefix = '', withChars = false, reserved, withNumber
         if (configs.revisableStringMap.hasOwnProperty(text)) {
             return configs.revisableStringMap[text];
         }
-        let spliter = '#';
-        let temp = text.split(spliter);
-        if (temp.length > 1) {
-            configKey = temp[0];
-            prefix = '';
-        } else {
+        let spliter = ['#'],//'@:{user>name.abc}'
+            hasSpliter;
+        for (let s of spliter) {
+            let temp = text.split(s);
+            if (temp.length > 1) {
+                configKey = temp[0];
+                prefix = '';
+                hasSpliter = 1;
+                break;
+            }
+        }
+        if (!hasSpliter) {
             reserved = configs.revisableStringMapReserved;
         }
     }

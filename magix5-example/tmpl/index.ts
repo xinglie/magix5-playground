@@ -70,7 +70,8 @@ setTimeout(() => {
                 '/todo': 'app/index',
                 '/todo2': 'app/index',
                 '/about': 'app/index',
-                '/component': 'app/index'
+                '/component': 'app/index',
+                '/form': 'app/index'
             },
             error(e: Error) {
                 setTimeout(() => {

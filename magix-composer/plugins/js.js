@@ -39,9 +39,9 @@ let processFile = (from, to, inwatch) => { // d:\a\b.js  d:\c\d.js
                 }
                 if (!e.isSnippet) {
                     to = to.replace(configs.jsFileExtNamesReg, m => {
-                        if (m.length > 3 && m[1] === 'm') {
-                            return '.mjs';
-                        }
+                        // if (m.length > 3 && m[1] === 'm') {
+                        //     return '.mjs';
+                        // }
                         return '.js';
                     });
                     configs.writeFileStart(e);

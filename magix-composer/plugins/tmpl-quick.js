@@ -1546,12 +1546,14 @@ let process = (src, e) => {
                         a.value &&
                         (node.inputType == 'radio' ||
                             node.inputType == 'checkbox')) {
-                        let newValue = newValue = (configs.hashedProjectName ? configs.hashedProjectName + '_' : '') + md5(e.from + ':' + a.value, tmplRadioOrCheckboxKey);
+                        let newValue = (configs.hashedProjectName ? configs.hashedProjectName + '_' : '') + md5(e.from, tmplRadioOrCheckboxKey);
+                        //console.log(e.from, a.value, newValue, JSON.stringify(a.value));
                         tmplCommandAnchorReg.lastIndex = 0;
-                        if (tmplCommandAnchorReg.test(a.value)) {
-                            tmplCommandAnchorReg.lastIndex = 0;
+                        // if (tmplCommandAnchorReg.test(a.value)) {
+                        //     tmplCommandAnchorReg.lastIndex = 0;
                             newValue += '_' + a.value;
-                        }
+                        //}
+                        //console.log(newValue,a.value);
                         a.value = newValue;
                     }
                     if (a.unary) {

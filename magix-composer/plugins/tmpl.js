@@ -58,7 +58,7 @@ let recoverRevisableStrings = (tmpl, values) => {
     }
     return tmpl;
 };
-let processTmpl = (fileContent, cssNamesMap, e, reject, lang, outString, quickStaticVars) => {
+let processTmpl = async (fileContent, cssNamesMap, e, reject, lang, outString, quickStaticVars) => {
     e.revisableStrings = [];
     let file = e.srcHTMLFile;
     if (configs.debug && unsupportCharsReg.test(fileContent)) {
@@ -91,7 +91,7 @@ let processTmpl = (fileContent, cssNamesMap, e, reject, lang, outString, quickSt
     }
     let srcContent = fileContent;
     try {
-        fileContent = tmplCutsomTag.process(fileContent, {
+        fileContent = await tmplCutsomTag.process(fileContent, {
             moduleId: e.moduleId,
             pkgName: e.pkgName,
             srcOwnerHTMLFile: file,
@@ -121,6 +121,7 @@ let processTmpl = (fileContent, cssNamesMap, e, reject, lang, outString, quickSt
 
     fileContent = fileContent.replace(htmlCommentCelanReg, '').trim();
     fileContent = tmplCmd.compile(fileContent);
+
     //console.log(fileContent);
     let refTmplCommands = Object.create(null);
     try {
@@ -146,6 +147,8 @@ let processTmpl = (fileContent, cssNamesMap, e, reject, lang, outString, quickSt
 
     //console.log(JSON.stringify(fileContent),refTmplCommands);
     fileContent = tmplAttr.process(fileContent, e, refTmplCommands, cssNamesMap);
+
+    //console.log(fileContent);
     try {
         //console.log(fileContent);
         fileContent = tmplCmd.tidy(fileContent);
@@ -174,7 +177,7 @@ let processTmpl = (fileContent, cssNamesMap, e, reject, lang, outString, quickSt
     return source;
 };
 module.exports = e => {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
         let cssNamesMap = e.cssNamesMap,
             from = e.from,
             moduleId = e.moduleId,
@@ -182,6 +185,7 @@ module.exports = e => {
         //console.log(e);
         //debugger;
         //仍然是读取view.js文件内容，把里面@到的文件内容读取进来
+        let promises = [];
         e.content = e.content.replace(configs.fileTmplReg, (match, quote, ctrl, name, ext) => {
             name = atpath.resolvePath(name, moduleId);
             let file = path.resolve(path.dirname(from) + sep + name + '.' + ext);
@@ -204,10 +208,13 @@ module.exports = e => {
                     console.log(chalk.red('[MXC Tip(tmpl)] conflicting template language'), 'at', chalk.magenta(e.shortHTMLFile), 'near', chalk.magenta(match + ' and ' + e.contentInfo.templateTag));
                 }
                 let outputString = ctrl == 'compiled';
-                return processTmpl(fileContent, cssNamesMap, e, reject, lang, outputString, quickStaticVars);
+                promises.push(processTmpl(fileContent, cssNamesMap, e, reject, lang, outputString, quickStaticVars));
+                return match;
             }
             return quote + 'unfound file:' + name + '.' + ext + quote;
         });
+        let data = await Promise.all(promises);
+        e.content = e.content.replace(configs.fileTmplReg, () => data.shift());
         e.quickStaticVars = quickStaticVars;
         resolve(e);
     });

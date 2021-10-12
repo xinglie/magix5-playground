@@ -184,7 +184,7 @@ let parse = (css, file, refAtRules) => {
     //     }
     // };
     let processSelectorRules = (start, end) => {
-        let rules = css.substring(start, end).trim();
+        let rules = css.substring(start, end);
         //console.log(rules);
         let inName = true;
         let idx = 0, last = 0;
