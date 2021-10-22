@@ -2,7 +2,7 @@
 version:5.0.2 Licensed MIT
 author:kooboy_li@163.com
 loader:umd
-enables:mxevent,richVframe,xml,async,service,wait,lang,router,routerHash,routerTip,richView,innerView,recast,require,customTags,webc,xview,taskComplete,taskIdle,spreadMxViewParams,removeStyle,taskCancel,eventVframe
+enables:mxevent,richVframe,xml,async,service,wait,lang,router,routerHash,routerTip,richView,innerView,recast,require,customTags,webc,xview,taskComplete,taskIdle,spreadMxViewParams,removeStyle,taskCancel,eventVframe,richVframeInvokeCancel,waitSelector
 optionals:routerState,routerTipLockUrl,routerForceState,checkAttr,lockSubWhenBusy,state
 */
 //magix-composer#snippet;
@@ -29,7 +29,9 @@ let Undefined = void Counter;
 
 let Doc_Document = document;
 let Timeout = Doc_Window.setTimeout;//setTimeout;
+
 let ClearTimeout = Doc_Window.clearTimeout;
+
 let Encode = encodeURIComponent;
 let Value = 'value';
 let Tag_Static_Key = '_';
@@ -1492,6 +1494,7 @@ Assign(Vframe[Prototype], {
     }
     
     
+    
     , unloadTest() {
         return new GPromise(async resolve => {
             let suspend = 0;
@@ -1573,15 +1576,28 @@ Assign(Vframe[Prototype], {
 let Body_EvtInfoCache = new MxCache();
 let Body_EvtInfoReg = /^([\w\-]+)\x1e(\d+)?(\x1e)?([^(]+)\(([\s\S]*?)\)$/;
 let Body_RootEvents = {};
-let Body_RootEvents_Modifier = {};
-let Body_RootEvents_Passive = {};
-let Body_RootEvents_Capture = {};
 let Body_SearchSelectorEvents = {};
-let Body_Passive_Flag = 4;
-let Body_Capture_Flag = 8;
-let Body_Capture_Modifier = { capture: true };
-let Body_Passive_Modifier = { passive: false };
-let Body_Passive_Capture_Modifier = { passive: false, capture: true };
+
+let Body_RootEvents_Modifier = {};
+let Body_RootEvents_Flags = {};
+
+let Body_Passive_True_Flag = 1;
+let Body_Passive_False_Flag = 2;
+let Body_Capture_True_Flag = 4;
+let Body_Capture_False_Flag = 8;
+
+let Body_Capture_True_Passive_False_Modifier = { capture: true, passive: false };
+let Body_Capture_True_Passive_True_Modifier = { capture: true, passive: true };
+let Body_Capture_False_Passive_False_Modifier = { capture: false, passive: false };
+let Body_Capture_False_Passive_True_Modifier = { capture: false, passive: true };
+
+/*
+    passive:false, capture:true
+    passive:true capture:true
+
+    passive:false, capture:false,
+    passive:false capture:false
+*/
 
 let Body_FindVframeInfo = (current, eventType) => {
     let vf, tempId, selectorObject, eventSelector, eventInfos = [],
@@ -1785,27 +1801,35 @@ let Body_DOMEventProcessor = domEvent => {
 };
 let Body_DOMEventBind = (type, searchSelector, remove, flags) => {
     let counter = Body_RootEvents[type] | 0;
-    let passiveCount = Body_RootEvents_Passive[type] | 0;
-    let captureCount = Body_RootEvents_Capture[type] | 0;
+    let flag = Body_RootEvents_Flags[type] || (Body_RootEvents_Flags[type] = {});
 
     let offset = (remove ? -1 : 1),
         fn = remove ? RemoveEventListener : AddEventListener;
-    if (flags & Body_Passive_Flag) {
-        passiveCount += offset;
-        Body_RootEvents_Passive[type] = passiveCount
+    if (flags & Body_Capture_True_Flag) {
+        flag[Body_Capture_True_Flag] = (flag[Body_Capture_True_Flag] | 0) + offset;
     }
-    if (flags & Body_Capture_Flag) {
-        captureCount += offset;
-        Body_RootEvents_Capture[type] = captureCount;
+    if (flags & Body_Capture_False_Flag) {
+        flag[Body_Capture_False_Flag] = (flag[Body_Capture_False_Flag] | 0) + offset;
     }
+    if (flags & Body_Passive_True_Flag) {
+        flag[Body_Passive_True_Flag] = (flag[Body_Passive_True_Flag] | 0) + offset;
+    }
+    if (flags & Body_Passive_False_Flag) {
+        flag[Body_Passive_False_Flag] = (flag[Body_Passive_False_Flag] | 0) + offset;
+    }
+
     let mod,
         lastMod = Body_RootEvents_Modifier[type];
-    if (passiveCount && captureCount) {
-        mod = Body_Passive_Capture_Modifier;
-    } else if (passiveCount) {
-        mod = Body_Passive_Modifier;
-    } else if (captureCount) {
-        mod = Body_Capture_Modifier;
+    if (flag[Body_Passive_False_Flag]) {
+        if (flag[Body_Capture_True_Flag]) {
+            mod = Body_Capture_True_Passive_False_Modifier;
+        } else {
+            mod = Body_Capture_False_Passive_False_Modifier;
+        }
+    } else if (flag[Body_Capture_True_Flag]) {
+        mod = Body_Capture_True_Passive_True_Modifier
+    } else {
+        mod = Body_Capture_False_Passive_True_Modifier;
     }
     if (!counter || remove === counter) { // remove=1  counter=1
         fn(Doc_Body, type, Body_DOMEventProcessor, remove ? lastMod : mod);
@@ -1831,7 +1855,7 @@ let Body_DOMEventBind = (type, searchSelector, remove, flags) => {
                 }
             }
             if (hasParams && !found) {
-                console.warn('[!use at to pass parameter] path:' + view.owner.path + ' at ' + (view.owner.parent().path));
+                console.warn('[!use # to pass parameter] path:' + view.owner.path + ' at ' + (view.owner.parent().path));
             }
         }
     };
@@ -2137,9 +2161,9 @@ let Q_Create = (tag, props, children, specials) => {
         let index = 0;
         if (vNodes.length &&
             vNodes[0]['@:{v#node.tag}'] != Spliter) {
-            for (let e of realNodes) {
-                if (e.nodeName.toLowerCase() != vNodes[index]['@:{v#node.tag}'].toLowerCase()) {
-                    console.error('real not match virtual!');
+            for (let e of vNodes) {
+                if (realNodes[index].nodeName.toLowerCase() != e['@:{v#node.tag}'].toLowerCase()) {
+                    console.error('virtual not match real nodes!');
                 }
                 index++;
             }
@@ -2940,16 +2964,21 @@ let View_Prepare = oView => {
             matches = p.match(View_EvtMethodReg);
             if (matches) {
                 [, isSelector, selectorOrCallback, events, modifiers] = matches;
-                mod = modifiers ? ToObject(modifiers) : Empty_Object;
+                mod = modifiers ? ToObject(modifiers) : Body_Capture_False_Passive_True_Modifier;
                 events = events.split(Comma);
                 for (item of events) {
                     node = View_Globals[selectorOrCallback];
-                    mask = 1;
-                    if (mod.passive === false) {
-                        mask |= Body_Passive_Flag;
+                    mask = 0;
+                    if (mod.passive ||
+                        mod.passive == Null) {
+                        mask |= Body_Passive_True_Flag;
+                    } else {
+                        mask |= Body_Passive_False_Flag;
                     }
                     if (mod.capture) {
-                        mask |= Body_Capture_Flag;
+                        mask |= Body_Capture_True_Flag;
+                    } else {
+                        mask |= Body_Capture_False_Flag;
                     }
                     if (isSelector) {
                         if (node) {
@@ -2964,7 +2993,6 @@ let View_Prepare = oView => {
                         if (node === Empty) {
                             selectorOrCallback = Empty;
                         }
-                        mask |= 2;
                         node = selectorObject[item];
                         if (!node) {
                             node = selectorObject[item] = [];
@@ -3613,6 +3641,9 @@ let Magix = {
     isFunction: IsFunction,
     isString: IsString,
     isNumber: IsNumber,
+    isPrimitive:IsPrimitive,
+    
+    
     waitSelector(selector, timeout, context) {
         context = context || document;
         timeout = timeout || 30 * Thousand;
@@ -3632,7 +3663,6 @@ let Magix = {
             Timeout(check, CallBreakTime);
         });
     },
-    isPrimitive:IsPrimitive,
     
     attach: EventListen,
     detach: EventUnlisten,
